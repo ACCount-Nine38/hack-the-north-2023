@@ -118,10 +118,8 @@ const banners = ['Crime City', 'Crime City'];
   
 function Gatcha({ BackToMenu }) {
     const user = useAuth();
-    console.log(user);
     // component animation fields
     const [creditAmount, setCreditAmount] = useState(0);
-
     const [banner, setBanner] = useState("")
     const [gatchaBackgroundImage, setGatchaBackgroundImage] = useState("../images/banners/banner1.png");
     const [skinRolled, setSkinRolled] = useState("");
@@ -140,7 +138,7 @@ function Gatcha({ BackToMenu }) {
 
     useEffect(() => {
         setCreditAmount(user.currentUser.nuggetCount);
-        // setCreditAmount(110);
+        setCreditAmount(1000);
     }, []);
 
     useEffect(() => {
@@ -152,6 +150,7 @@ function Gatcha({ BackToMenu }) {
         .catch((error) => {
             console.error("Error updating document: ", error);
         });
+        user.newNuggetCount(creditAmount);
         console.log(creditAmount);
     }, [creditAmount]);
 
@@ -209,8 +208,8 @@ function Gatcha({ BackToMenu }) {
             return temp.type === type && temp.set === "Mafia" && temp.grade === "normal";
         });
 
+        console.log(type,set, grade, skin);
         
-
         setSkinRolled(skin);
 
         console.log(skin)

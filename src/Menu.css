@@ -212,10 +212,9 @@
 
 .MallTitle {
     position: absolute;
+    align-items: center;
     top: 5vh;
-    width: 120vh;
     height: 50vh;
-    left: 115vh;
     font-size: 8vh;
     font-family: 'Inter', sans-serif;
     font-weight: 300;
@@ -254,7 +253,7 @@
     position: absolute;
     top: 20vh;
     left: 5vh;
-    width: 100vh;
+    width: 80vh;
     height: 50vh;
     overflow: hidden;
     display: flex;
@@ -275,7 +274,7 @@
     border: 3px solid gray;
     height: 10vh;
     width: 50vh;
-    left: 30vh;
+    /* left: 0vh; */
     top: 70vh;
     border-radius: 10px;
 }
@@ -283,7 +282,7 @@
 .GatchaMachinePage {
     position: absolute;
 
-    left: 170vh;
+    left: 100vh;
     top: 45vh;
     height: 45vh;
     width: 40vh;
