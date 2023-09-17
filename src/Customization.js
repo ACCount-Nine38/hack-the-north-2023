@@ -300,7 +300,8 @@ function Customize({backToMainMenu}) {
     // loading the skins
     const [_, setSkinCollectionEngine] = useState(null)
     useEffect(() => {
-        setSkinCollectionEngine(new SkinCollectionEngine(currentUser, (skinCollection) => {
+        setSkinCollectionEngine(new SkinCollectionEngine(currentUser.id, (skinCollection) => {
+            console.log(skinCollection)
             setLoadedChessSkins(skinCollection)
         }));
     }, [])
