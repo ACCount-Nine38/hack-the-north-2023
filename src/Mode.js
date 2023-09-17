@@ -2,6 +2,9 @@ import "./Mode.css";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import images from "./images";
+import MatchMakingEngine from './MatchMakingEngine.js';
+// TODO: Remove this explicit use of firebase auth and pass the user id across the screens
+import { getAuth } from 'firebase/auth';
 
 const categories = {
   Competitive: {
@@ -325,10 +328,11 @@ const Category = ({
   );
 };
 
-function Select({ setGameMode, backToMainMenu }) {
-  const [backButtonState, setBackButtonState] = useState("initial");
-  const [matchButtonState, setMatchButtonState] = useState("initial");
-  const [selectedMode, setSelectedMode] = useState("Category");
+
+function Select({DidFindGame, backToMainMenu}) {
+  const [backButtonState, setBackButtonState] = useState('initial');
+  const [matchButtonState, setMatchButtonState] = useState('initial');
+  const [selectedMode, setSelectedMode] = useState('Category');
   // -1: unselected
   // remaining game modes follow comments in Game.js
   const [selectedGameMode, setSelectedGameMode] = useState(-1);
@@ -336,111 +340,95 @@ function Select({ setGameMode, backToMainMenu }) {
   const [resetCount, setResetCount] = useState(0);
 
   function ToMenu() {
-    const exitTimer = setTimeout(() => {
-      backToMainMenu();
-      clearTimeout(exitTimer);
-    }, 550);
+      const exitTimer = setTimeout(() => {
+          backToMainMenu()
+          clearTimeout(exitTimer)
+      }, 550);
   }
 
   useEffect(() => {
-    if (selectedMode !== "none") {
-      setResetCount((prev) => prev + 1);
-    }
-
-    if (selectedMode === "Category") {
-      setDisplayedModes(Object.values(categories));
-    } else if (selectedMode === "Competitive") {
-      const standardModes = Object.values(modes).filter(
-        (mode) => mode.category === "Competitive"
-      );
-      setDisplayedModes(standardModes);
-    } else if (selectedMode === "Casual") {
-      const standardModes = Object.values(modes).filter(
-        (mode) => mode.category === "Casual"
-      );
-      setDisplayedModes(standardModes);
-    } else if (selectedMode === "Bot") {
-      const standardModes = Object.values(modes).filter(
-        (mode) => mode.category === "Bot"
-      );
-      setDisplayedModes(standardModes);
-    }
-  }, [selectedMode]);
+      if (selectedMode !== 'none') {
+          setResetCount(prev => prev + 1);
+      } 
+      
+      if (selectedMode === 'Category') {
+          setDisplayedModes(Object.values(categories));
+      } else if (selectedMode === 'Competitive') {
+          const standardModes = Object.values(modes).filter(mode => mode.category === 'Competitive');
+          setDisplayedModes(standardModes);
+      } else if (selectedMode === 'Casual') {
+          const standardModes = Object.values(modes).filter(mode => mode.category === 'Casual');
+          setDisplayedModes(standardModes);
+      } else if (selectedMode === 'Bot') {
+          const standardModes = Object.values(modes).filter(mode => mode.category === 'Bot');
+          setDisplayedModes(standardModes);
+      } 
+  }, [selectedMode])
 
   useEffect(() => {
-    setMatchButtonState("enable");
-  }, [selectedGameMode]);
+      setMatchButtonState('enable')
+  }, [selectedGameMode])
 
-  const categoryComponents = Object.values(displayedModes).map(
-    (category, index) => {
-      return (
-        <Category
-          info={category}
-          key={index}
-          resetCount={resetCount}
-          selectedMode={selectedMode}
-          selectedGameMode={selectedGameMode}
-          onSelect={
-            category.category === "Category"
-              ? setSelectedMode
-              : setSelectedGameMode
-          }
-        />
-      );
-    }
-  );
+  const categoryComponents = Object.values(displayedModes).map((category, index) => {
+      return <Category info={category} key={index} resetCount={resetCount} selectedMode={selectedMode} selectedGameMode={selectedGameMode}
+          onSelect={category.category === 'Category' ? setSelectedMode : setSelectedGameMode}/>
+  })
 
   return (
-    <div className="Mode">
-      <motion.div className="Title" animate={titleAnimations[backButtonState]}>
-        SELECT MODE
-      </motion.div>
-      <div className="ModeScroll" key={resetCount}>
-        {categoryComponents}
+      <div className = "Mode">
+          <motion.div className='Title' animate={titleAnimations[backButtonState]}>
+              SELECT MODE
+          </motion.div>
+          <div className='ModeScroll' key={resetCount}>
+              {categoryComponents}
+          </div>
+          <motion.div className='MatchButton' 
+                  whileHover={selectedGameMode >= 0 ? { scale: 1.1 } : {}}
+                  style = {selectedGameMode >= 0 ? { color: '#6B6B6B' } : { color: '#B0B0B0' }}
+                  animate={matchButtonAnimations[matchButtonState]}
+                  onClick={() => {
+                      if (selectedGameMode >= 0) {
+                          // call the backend to enqueue the user into matchmaking
+                          const matchMatchingEngine = new MatchMakingEngine(getAuth().currentUser.uid);
+                          matchMatchingEngine.queueForMatch(selectedMode.toLowerCase(), (game_id) => {
+                              setBackButtonState('exit')
+                              setMatchButtonState('exit')
+                              setSelectedMode('none')
+                              // give enough time for exit animations to finish before going to the next screen
+                              // TODO: Stop the "in-queue" animation
+                              const timer = setTimeout(() => {
+                                  DidFindGame(selectedGameMode, game_id);
+                                  clearTimeout(timer)
+                              }, 750);
+                          }).then(() => {
+                              // TODO: Create an "in-queue" animation
+                              alert("ENTERED MATCHMAKING");
+                          }).catch(error => {
+                              alert(error);
+                          })
+                      }
+                  }}
+                  onAnimationComplete={()=>{
+                      if (matchButtonState === 'enable') {
+                          setMatchButtonState('reset')
+                      } 
+                  }}>
+              MATCH
+          </motion.div>
+          <motion.div className='BackButton' 
+                  whileHover={{ scale: 1.1 }} 
+                  animate={backButtonAnimations[backButtonState]}
+                  onClick={() => {
+                      if (selectedMode !== "Category") {
+                          setSelectedMode("Category")
+                          setSelectedGameMode(-1)
+                      } else {
+                          ToMenu()
+                      }
+                  }}>
+              BACK
+          </motion.div>
       </div>
-      <motion.div
-        className="MatchButton"
-        whileHover={selectedGameMode >= 0 ? { scale: 1.1 } : {}}
-        style={
-          selectedGameMode >= 0 ? { color: "#6B6B6B" } : { color: "#B0B0B0" }
-        }
-        animate={matchButtonAnimations[matchButtonState]}
-        onClick={() => {
-          if (selectedGameMode >= 0) {
-            setBackButtonState("exit");
-            setMatchButtonState("exit");
-            setSelectedMode("none");
-            // give enough time for exit animations to finish before going to the next screen
-            const timer = setTimeout(() => {
-              setGameMode(selectedGameMode);
-              clearTimeout(timer);
-            }, 750);
-          }
-        }}
-        onAnimationComplete={() => {
-          if (matchButtonState === "enable") {
-            setMatchButtonState("reset");
-          }
-        }}
-      >
-        MATCH
-      </motion.div>
-      <motion.div
-        className="BackButton"
-        whileHover={{ scale: 1.1 }}
-        animate={backButtonAnimations[backButtonState]}
-        onClick={() => {
-          if (selectedMode !== "Category") {
-            setSelectedMode("Category");
-            setSelectedGameMode(-1);
-          } else {
-            ToMenu();
-          }
-        }}
-      >
-        BACK
-      </motion.div>
-    </div>
   );
 }
 

@@ -212,6 +212,10 @@ function Gatcha({ BackToMenu }) {
         console.log(type,set, grade, skin);
         
         setSkinRolled(skin);
+
+        console.log(skin)
+        skinCollectionEngine.addSkinToCollection(skin)
+
         setCreditAmount(creditAmount - (status === BannerCategory.NORMAL ? NORMAL_BANNER_COST : PRESTIGE_BANNER_COST));
     }
 
