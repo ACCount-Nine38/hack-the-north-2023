@@ -12,7 +12,7 @@ import { motion } from 'framer-motion';
 import { Game as ChessGame } from 'js-chess-engine'
 import { getLayout1, getLayoutTiles1 } from './utils.js'
 import { useAuth } from './AuthContext';
-import GameNetworkingEngine from "./GameNetworkingEngine";
+// import GameNetworkingEngine from "./GameNetworkingEngine";
 
 // when switched to black / white, board will rotate
 export var MY_COLOR = "white"
@@ -79,17 +79,17 @@ function Game({game_id, user_id, game_mode}) {
     // NETWORKING
     // **************************************
 
-    const [game_networking_engine, setGameNetworkingEngine] = useState(null);
+    // const [game_networking_engine, setGameNetworkingEngine] = useState(null);
 
-    useEffect(() => {
-        if (game_id) {
-            setGameNetworkingEngine(new GameNetworkingEngine(game_id, gameDidUpdate));
-        }
-    }, [game_id]);
+    // useEffect(() => {
+    //     if (game_id) {
+    //         setGameNetworkingEngine(new GameNetworkingEngine(game_id, gameDidUpdate));
+    //     }
+    // }, [game_id]);
 
-    const gameDidUpdate = (game_state) => {
+    // const gameDidUpdate = (game_state) => {
         
-    }
+    // }
 
     // **************************************
     // SCREEN SHAKE

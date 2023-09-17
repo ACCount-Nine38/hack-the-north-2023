@@ -329,7 +329,7 @@ const Category = ({
 };
 
 
-function Select({DidFindGame, backToMainMenu}) {
+function Select({setGameMode, backToMainMenu}) {
   const [backButtonState, setBackButtonState] = useState('initial');
   const [matchButtonState, setMatchButtonState] = useState('initial');
   const [selectedMode, setSelectedMode] = useState('Category');
@@ -397,7 +397,7 @@ function Select({DidFindGame, backToMainMenu}) {
                               // give enough time for exit animations to finish before going to the next screen
                               // TODO: Stop the "in-queue" animation
                               const timer = setTimeout(() => {
-                                  DidFindGame(selectedGameMode, game_id);
+                                  setGameMode(selectedGameMode);
                                   clearTimeout(timer)
                               }, 750);
                           }).then(() => {
