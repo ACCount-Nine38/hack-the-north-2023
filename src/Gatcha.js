@@ -206,7 +206,7 @@ function Gatcha({ BackToMenu }) {
 
         const skin = Object.keys(chessSkins).find((key) => {
             const temp = chessSkins[key];
-            return temp.type === type && temp.set === "Mafia" && temp.grade === "normal";
+            return temp.type === type && temp.set === set && temp.grade === "normal";
         });
 
         console.log(type,set, grade, skin);
@@ -234,6 +234,7 @@ function Gatcha({ BackToMenu }) {
             >
                 roll
             </motion.div>
+            <motion.div className="GatchaRollResult">{skinRolled}</motion.div>
         </motion.div>
         
         <motion.div className='BackButton'

@@ -311,6 +311,21 @@
     color: black;
     border: 2px solid black;
     border-radius: 10px; 
+    margin: 3vh;
+}
+
+.GatchaRollResult {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10vh;
+    height: 5vh;
+    font-size: 2vh;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    background-color: whitesmoke;
+    color: black;
+    border: 2px solid black;
 }
 
 .SquareBox {
